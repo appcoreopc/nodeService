@@ -29,5 +29,6 @@ class App {
     })
   }
 }
-
+// same as 
+// new App();
 export default new App().express
