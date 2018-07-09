@@ -2,53 +2,67 @@ import * as express from 'express';
 import { Router } from 'express';
 import * as NodeMailer from 'nodemailer';
 
+
 const router = Router();
 
 interface IMailObject {
-    sender : string; 
-    receiver : string; 
-    subject : string;
-    content : string 
+    sender: string;
+    receiver: string;
+    subject: string;
+    content: string
 }
 
-router.post('/', function(req, res) {
+router.post('/', function (req, res) {
 
-    if (validateEmail(req))
-    {
-       let mailObject : IMailObject = { 
-           sender : req.body.sender, 
-           receiver : req.body.receiver, 
-           subject : req.body.subject, 
-           content : req.body.content
-       }
-       send(mailObject);
+    let result: boolean = false;
+
+    if (validateEmail(req)) {
+        let mailObject: IMailObject = {
+            sender: req.body.sender,
+            receiver: req.body.receiver,
+            subject: req.body.subject,
+            content: req.body.content
+        }
+
+        let result = send(mailObject);
+
+        console.log('after calling send method');
+        
+        if (result) {
+            res.status(201).json({
+                message: 'sent successful!'
+            })
+        }
+        else 
+        {
+            res.status(500).json({
+                message: 'unable to send email        '
+            })
+        }
     }
-
-    res.status(201).json({
-        message: 'Selamat World!'
-    })
 });
 
-function validateEmail(req) : boolean {
+function validateEmail(req): boolean {
 
     console.log(req.body)
 
     if (req && req.body && req.body.sender && req.body.receivers)
         return true;
-        
+
     return false;
 }
 
-function send(mailObject : IMailObject) {
 
-    
+async function send(mailObject: IMailObject): Promise<any> {
+
+    console.log('calling send function');
     let transporter = NodeMailer.createTransport({
         host: 'smtp.ethereal.email',
         port: 587,
         secure: false, // true for 465, false for other ports
         auth: {
-           // user: account.user, // generated ethereal user
-           // pass: account.pass // generated ethereal password
+            // user: account.user, // generated ethereal user
+            // pass: account.pass // generated ethereal password
         }
     });
 
@@ -62,23 +76,21 @@ function send(mailObject : IMailObject) {
     };
 
     // send mail with defined transport object
-    transporter.sendMail(mailOptions, (error, info) => {
+    await transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-            return console.log(error);
+            console.log(error);
+            return false;
         }
         console.log('Message sent: %s', info.messageId);
-        // Preview only available when sending through an Ethereal account
         console.log('Preview URL: %s', NodeMailer.getTestMessageUrl(info));
-
-        // Message sent: <b658f8ca-6296-ccf4-8306-87d57a0b4321@example.com>
-        // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
+        return true;
     });
 }
 
-router.post('/:id', function(req, res) {
+router.post('/:id', function (req, res) {
     res.json({
         message: 'Hello World!'
-      })
+    })
 });
 
 export default router;
