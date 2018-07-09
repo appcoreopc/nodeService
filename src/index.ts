@@ -1,13 +1,16 @@
 import * as express from 'express';
 import { Router } from 'express';
 import mailer from './Mailer';
+import { bodyParser } from 'body-parser';
 
 class App {
-  public express
-  public swaggerUi;
+  public express;
+  public expressParser; 
 
   constructor() {
     this.express = express()
+    this.expressParser = express.json();
+    
     this.mountRoutes()
   }
 
@@ -22,7 +25,10 @@ class App {
     })
 
     this.express.use('/', router)
-    this.express.use('/birds', mailer)
+    this.express.use(this.expressParser);
+
+  
+    this.express.use('/mail', mailer)
 
     this.express.listen(3000, () => {
       console.log('connected! on part 3000');
