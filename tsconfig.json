@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "lib": ["es2015"],
+    "lib": ["es2015", "es2015.promise"], 
     "module": "commonjs",
     "outDir": "dist",
     "sourceMap": true
