@@ -16,8 +16,11 @@ router.post('/', function (req, res) {
 
     let result: boolean = false;
 
+    console.log('initiating email send');
+
     if (validateEmail(req)) {
-        let mailObject: IMailObject = {
+
+        let mailObject: IMailObject = {            
             sender: req.body.sender,
             receiver: req.body.receiver,
             subject: req.body.subject,
@@ -40,29 +43,31 @@ router.post('/', function (req, res) {
             })
         }
     }
+    else { 
+        console.log('unable to validate send info.');
+    }
 });
 
 function validateEmail(req): boolean {
-
     console.log(req.body)
 
-    if (req && req.body && req.body.sender && req.body.receivers)
+    if (req && req.body && req.body.sender && req.body.receiver)
         return true;
 
     return false;
 }
 
-
 async function send(mailObject: IMailObject): Promise<any> {
-
+     
     console.log('calling send function');
+
     let transporter = NodeMailer.createTransport({
         host: 'smtp.ethereal.email',
         port: 587,
         secure: false, // true for 465, false for other ports
         auth: {
-            // user: account.user, // generated ethereal user
-            // pass: account.pass // generated ethereal password
+             user: 'nlalbndxnvcepenz@ethereal.email', // generated ethereal user
+             pass: 'MAJAcN5T5dz8SaQC6E' // generated ethereal password
         }
     });
 

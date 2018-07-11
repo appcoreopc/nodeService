@@ -25,9 +25,7 @@ class App {
     })
 
     this.express.use('/', router)
-    this.express.use(this.expressParser);
-
-  
+    this.express.use(this.expressParser);  
     this.express.use('/mail', mailer)
 
     this.express.listen(3000, () => {
